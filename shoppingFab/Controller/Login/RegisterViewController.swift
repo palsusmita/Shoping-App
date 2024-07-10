@@ -6,13 +6,15 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var usernameLabel: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var address: UITextField!
     @IBOutlet weak var confirmPasswordTextField: UITextField!
    
         
     //MARK: - Interaction handlers
     @IBAction func signUpButtonClicked(_ sender: UIButton) {
-        if let email = emailTextField.text, let password = passwordTextField.text, let confirmPassword = confirmPasswordTextField.text, let username = usernameLabel.text {
+        if let email = emailTextField.text,let address = address.text, let password = passwordTextField.text, let confirmPassword = confirmPasswordTextField.text, let username = usernameLabel.text {
             if isPasswordsMatch(password: password, confirmPassword: confirmPassword) {
+                CoreDataManager.shared.saveUserData(name: username, email: email, address: address, password: password)
                 self.performSegue(withIdentifier: K.Segues.registerToLogin, sender: self)
             }
             else{

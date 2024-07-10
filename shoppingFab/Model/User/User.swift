@@ -1,8 +1,8 @@
-//
-//  User.swift
-//  shoppingFab
-//
-//  Created by susmita on 29/06/24.
-//
-
 import Foundation
+
+struct User: Codable {
+    var id: String?
+    var username: String?
+    var email: String?
+    var cart: [Int : Int]?
+}

@@ -14,26 +14,40 @@ class NetworkViewModel {
     var categoryList: [CategoryModel] = []
     var product: ProductData?
     var filteredProductList: [ProductModel] = []
-    
+    // fetch all products
     func fetchProducts(completion: @escaping () -> Void) {
-        AF.request(K.Network.baseURL).response { response in
-            switch response.result {
-            case .success(let data):
-                do {
-                    let productData = try JSONDecoder().decode([ProductData].self, from: data!)
-                    self.productList = productData.map { data in
-                        ProductModel(id: data.id, title: data.title, price: Float(data.price), image: data.image, rate: Float(data.rating.rate), category: data.category, description: data.description, count: data.rating.count)
-                    }
-                    completion()
-                } catch let error {
-                    print(error)
+        guard let url = URL(string: K.Network.baseURL) else {
+            print("Invalid URL")
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching products: \(error)")
+                return
+            }
+            
+            guard let data = data else {
+                print("No data received")
+                return
+            }
+            
+            do {
+                let productData = try JSONDecoder().decode([ProductData].self, from: data)
+                self.productList = productData.map { data in
+                    ProductModel(id: data.id, title: data.title, price: Float(data.price), image: data.image, rate: Float(data.rating.rate), category: data.category, description: data.description, count: data.rating.count)
                 }
-            case .failure(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    completion()
+                }
+            } catch let error {
+                print("Decoding error: \(error)")
             }
         }
+        
+        task.resume()
     }
-    
+    // fetch list of categories
     func fetchCategories(completion: @escaping () -> Void) {
         AF.request(K.Network.categoriesURL).response { response in
             switch response.result {
@@ -50,7 +64,7 @@ class NetworkViewModel {
             }
         }
     }
-    
+    // fetch product detaills
     func fetchProductDetails(productId: Int, completion: @escaping () -> Void) {
         AF.request("\(K.Network.baseURL)/\(productId)").response { response in
             switch response.result {
@@ -67,6 +81,7 @@ class NetworkViewModel {
             }
         }
     }
+    //fetch category product list
     func fetchCategoryProducts(category: String, completion: @escaping () -> Void) {
           AF.request("\(K.Network.categoryURL)/\(category)").response { response in
               switch response.result {

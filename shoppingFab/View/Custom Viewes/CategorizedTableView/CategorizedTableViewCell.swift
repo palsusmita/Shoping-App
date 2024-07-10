@@ -1,10 +1,3 @@
-//
-//  CategorizedTableViewCell.swift
-//  Shopping-App-eCommerce
-//
-//  Created by Osman Emre Ömürlü on 31.01.2023.
-//
-
 import UIKit
 
 class CategorizedTableViewCell: UITableViewCell {

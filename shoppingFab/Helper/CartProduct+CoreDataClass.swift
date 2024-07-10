@@ -9,7 +9,11 @@
 import Foundation
 import CoreData
 
+//@objc(CartProduct)
+//public class CartProduct: NSManagedObject {
+//
+//}
 @objc(CartProduct)
 public class CartProduct: NSManagedObject {
-
+    
 }

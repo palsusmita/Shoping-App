@@ -1,13 +1,4 @@
-//
-//  CartTableViewCell.swift
-//  Shopping-App-eCommerce
-//
-//  Created by Osman Emre Ömürlü on 4.02.2023.
-//
-
 import UIKit
-import Firebase
-import FirebaseFirestore
 
 class CartTableViewCell: UITableViewCell {
 
@@ -25,8 +16,6 @@ class CartTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         quantity = 1
-        
-        //koseleri yuvarlaklastirma
         layer.cornerRadius = 20
         layer.masksToBounds = true
     }

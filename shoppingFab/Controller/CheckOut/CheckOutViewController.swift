@@ -1,29 +1,29 @@
-//
-//  CheckOutViewController.swift
-//  shoppingFab
-//
-//  Created by susmita on 30/06/24.
-//
 
 import UIKit
 
 class CheckOutViewController: UIViewController {
-
+    @IBOutlet weak var addressLabel: UILabel!
+    @IBOutlet weak var itemsPrice: UILabel!
+    @IBOutlet weak var totalPrice: UILabel!
+    @IBOutlet weak var payButton: UIButton!
+    var totalItemsPrice = ""
+    private var viewModel = userViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        fetchAddress() 
+        totalPrice.text = totalItemsPrice
+        itemsPrice.text = totalItemsPrice
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func fetchAddress(){
+        viewModel.fetchUserData { success in
+            if success {
+                DispatchQueue.main.async {
+                    self.addressLabel.text = self.viewModel.userAddress
+                }
+            } else {
+                print("Failed to fetch user details")
+            }
+        }
     }
-    */
-
 }

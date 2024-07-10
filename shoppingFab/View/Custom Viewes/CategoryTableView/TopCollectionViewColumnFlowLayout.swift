@@ -1,23 +1,16 @@
-//
-//  TopCollectionViewColumnFlowLayout.swift
-//  Shopping-App-eCommerce
-//
-//  Created by Osman Emre Ömürlü on 30.01.2023.
-//
-
 import UIKit
 
 class TopCollectionViewColumnFlowLayout: UICollectionViewFlowLayout {
     
-    let sutunSayisi: Int
-    var yukseklikOrani: CGFloat = (1.0 / 3.0)
+    let columnNumber: Int
+    var heightRatio: CGFloat = (1.0 / 3.0)
     
-    init(sutunSayisi: Int, minSutunAraligi: CGFloat = 0, minSatirAraligi: CGFloat = 0) {
-        self.sutunSayisi = sutunSayisi
+    init(columnNumber: Int, minColSpace: CGFloat = 0, minRowSpace: CGFloat = 0) {
+        self.columnNumber = columnNumber
         super.init()
         
-        self.minimumInteritemSpacing = minSutunAraligi
-        self.minimumLineSpacing = minSatirAraligi
+        self.minimumInteritemSpacing = minColSpace
+        self.minimumLineSpacing = minRowSpace
     }
     
     required init?(coder: NSCoder) {
@@ -29,12 +22,12 @@ class TopCollectionViewColumnFlowLayout: UICollectionViewFlowLayout {
         
         guard let collectionView = collectionView else { return }
         
-        let araliklar = collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + minimumInteritemSpacing * CGFloat(sutunSayisi - 1)
+        let spacing = collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + minimumInteritemSpacing * CGFloat(columnNumber - 1)
         
-        let elemaninGenisligi = (collectionView.bounds.size.width - araliklar) / CGFloat(sutunSayisi).rounded(.down) // .rouned(.down) ile asagiya yuvarladik.
-        let elemaninYuksekligi = elemaninGenisligi * yukseklikOrani
+        let elementWidth = (collectionView.bounds.size.width - spacing) / CGFloat(columnNumber).rounded(.down) // .rouned(.down) ile asagiya yuvarladik.
+        let elementHeight = elementWidth * heightRatio
         
-        itemSize = CGSize(width: elemaninGenisligi, height: elemaninYuksekligi)
+        itemSize = CGSize(width: elementWidth, height: elementHeight)
         
     }
     

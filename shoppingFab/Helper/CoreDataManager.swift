@@ -12,13 +12,16 @@ import UIKit
 class CoreDataManager {
     static let shared = CoreDataManager()
 
-    private init() {}
+    private var context: NSManagedObjectContext {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("Unable to access AppDelegate")
+        }
+        return appDelegate.persistentContainer.viewContext
+    }
+// save Cart items in core data
 
     func saveCartProduct(productId: Int64, productImage: UIImageView, productPrice: String, productQuantity: Int64, productTitle: String) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        let context = appDelegate.persistentContainer.viewContext
+        let context = self.context
 
         // Fetch the product with the given productId
         let fetchRequest: NSFetchRequest<CartProductList> = CartProductList.fetchRequest()
@@ -53,11 +56,10 @@ class CoreDataManager {
             print("Could not save. \(error), \(error.userInfo)")
         }
     }
+    
+    // fetch Cart items from core data
     func fetchCartProducts() -> [CartProductList]?{
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return nil
-        }
-        let context = appDelegate.persistentContainer.viewContext
+        let context = self.context
         let fetchRequest = NSFetchRequest<CartProductList>(entityName: "CartProductList")
 
         do {
@@ -68,11 +70,10 @@ class CoreDataManager {
             return nil
         }
     }
+    
+    // update Cart items in core data
     func updateCartProduct(productId: Int64, productQuantity: Int64) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        let context = appDelegate.persistentContainer.viewContext
+        let context = self.context
 
         // Fetch the product with the given productId
         let fetchRequest: NSFetchRequest<CartProductList> = CartProductList.fetchRequest()
@@ -96,11 +97,10 @@ class CoreDataManager {
             print("Could not update. \(error), \(error.userInfo)")
         }
     }
+    
+    // delete Cart items in core data
     func deleteCartProduct(withProductId productId: Int64) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        let context = appDelegate.persistentContainer.viewContext
+        let context = self.context
         let fetchRequest: NSFetchRequest<CartProductList> = CartProductList.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "productId == %d", productId)
 
@@ -117,11 +117,10 @@ class CoreDataManager {
             print("Could not delete. \(error), \(error.userInfo)")
         }
     }
+    
+    // save user info in core data
     func saveUserData(name: String , email: String,address: String,password:String){
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        let context = appDelegate.persistentContainer.viewContext
+        let context = self.context
         let userEntity = NSEntityDescription.entity(forEntityName: "UserData", in: context)!
         let userData = NSManagedObject(entity: userEntity, insertInto: context)
         userData.setValue(name, forKey: "name")
@@ -136,11 +135,10 @@ class CoreDataManager {
                     print("Could not save. \(error), \(error.userInfo)")
                 }
     }
+    
+    // fetch user info in core data
     func fetchUserData() -> [UserData]?{
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return nil
-        }
-        let context = appDelegate.persistentContainer.viewContext
+        let context = self.context
         let fetchRequest = NSFetchRequest<UserData>(entityName: "UserData")
 
         do {

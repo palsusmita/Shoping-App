@@ -1,12 +1,4 @@
-//
-//  CategorizedTableViewController.swift
-//  Shopping-App-eCommerce
-//
-//  Created by Osman Emre Ömürlü on 31.01.2023.
-//
-
 import UIKit
-import Alamofire
 import SDWebImage
 
 class CategorizedViewController: UIViewController {
@@ -15,8 +7,8 @@ class CategorizedViewController: UIViewController {
     @IBOutlet weak var categoryNameLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
-    static var filteredProductList: [ProductModel] = []
     static var selectedCategory: String = ""
+    private let viewModel = NetworkViewModel()
     
     //MARK: - Life cycle
     override func viewDidLoad() {
@@ -25,7 +17,7 @@ class CategorizedViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        CategorizedViewController.filteredProductList = []
+        viewModel.filteredProductList = []
         fetchCategoryProducts(category: CategorizedViewController.selectedCategory)
         categoryNameLabelSetup(name: CategorizedViewController.selectedCategory)
     }
@@ -58,26 +50,11 @@ class CategorizedViewController: UIViewController {
     }
     
     func fetchCategoryProducts(category: String) {
-        print("\(K.Network.categoryURL)/\(category)")
-       AF.request("\(K.Network.categoryURL)/\(category)").response { response in
-       switch response.result {
-       case .success(_):
-           do {
-               let productData = try JSONDecoder().decode([ProductData].self, from: response.data!)
-               for data in productData {
-                   CategorizedViewController.filteredProductList.append(ProductModel(id: data.id, title: data.title, price: Float(data.price), image: data.image, rate: Float(data.rating.rate), category: data.category, description: data.description, count: data.rating.count))
+        viewModel.fetchCategoryProducts(category: CategorizedViewController.selectedCategory) { [weak self] in
                    DispatchQueue.main.async {
-                       self.tableView.reloadData()
+                       self?.tableView.reloadData()
                    }
                }
-               } catch
-               let error {
-                   print(error)
-               }
-               case .failure(let error):
-               print(error)
-           }
-       }
    }
 }
 
@@ -85,12 +62,12 @@ class CategorizedViewController: UIViewController {
 extension CategorizedViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return CategorizedViewController.filteredProductList.count
+        return viewModel.filteredProductList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.TableView.categorizedTableViewCell, for: indexPath) as! CategorizedTableViewCell
-        let u = CategorizedViewController.filteredProductList[indexPath.row]
+        let u = viewModel.filteredProductList[indexPath.row]
         cell.productNameLabel.text = u.title
         cell.productDescriptionLabel.text = u.description
         cell.productRateLabel.text = "⭐️ \(u.rate!) "
@@ -102,7 +79,7 @@ extension CategorizedViewController: UITableViewDataSource {
 
 extension CategorizedViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let productIdAtSelectedRow = CategorizedViewController.filteredProductList[indexPath.row].id {
+        if let productIdAtSelectedRow = viewModel.filteredProductList[indexPath.row].id {
             changeVCCategoryToProductDetail(id: productIdAtSelectedRow)
         }
         tableView.deselectRow(at: indexPath, animated: true)

@@ -21,6 +21,3 @@ extension CartProduct {
 
 }
 
-extension CartProduct : Identifiable {
-
-}

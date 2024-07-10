@@ -1,9 +1,3 @@
-//
-//  Constants.swift
-//  Shopping-App-eCommerce
-//
-//  Created by Osman Emre Ömürlü on 27.01.2023.
-//
 
 struct K {
     struct Segues {
@@ -13,6 +7,7 @@ struct K {
         static let categoryTableView = "CategoryTableViewVC"
         static let productDetailViewController = "productDetailViewController"
         static let loginToForgot = "loginToForgot"
+        static let checkOutViewController = "CheckOutViewController"
     }
     
     struct StoryboardID {
